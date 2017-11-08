@@ -7,29 +7,30 @@ const errors = require("../errors")
 module.exports = function(app, db) {
     app.get("/pictures/:date", (req, res, next) => {
         const date = req.params.date
-        logger.info(`---Start pics requiest. Date: ${date}. Porsion size: ${portionSize}`)
+        logger.info(
+            `---Start pics requiest. Date: ${date}. Porsion size: ${portionSize}`
+        )
         const dates = makeDates(date) // strings
-
-        database
-            // try load from db
-            .tryGetPictures(db, dates)
-            .then(pics => {
+        database.getPicturesFromDb(db, dates).then(result => {
+            if (result.missedDates.length == 0) {
                 logger.info("Pics loaded from db")
-                res.json(pics)
-            })
-            .catch(err => {
-                logger.info("Pics missed in db.")
+                res.json(result.pictures)
+            } else {
                 nasaApi
-                    .getPictures(dates)
-                    .then(data => {
-                        return database.savePictures(db, data)
+                    .getPictures(result.missedDates)
+                    .then(missedPictures => {
+                        logger.info(
+                            `Pics missed in db. Count missed: ${missedPictures.length}`
+                        )
+                        return database.savePicturesToDb(db, missedPictures)
                     })
-                    .then(data => {
+                    .then(missedPictures => {
                         logger.info("---Finish. Pics successfully loaded")
-                        res.send(data)
+                        res.send(result.pictures.concat(missedPictures))
                     })
                     .catch(next)
-            })
+            }
+        })
     })
 
     app.use(function(err, req, res, next) {
