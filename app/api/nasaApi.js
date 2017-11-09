@@ -1,5 +1,5 @@
 const axios = require("axios")
-const apiKey = require("../config").api_key
+const apiKey = process.env.NASA_API_KEY
 const url = `https://api.nasa.gov/planetary/apod?api_key=${apiKey}&date=`
 
 const getPictures = date => {

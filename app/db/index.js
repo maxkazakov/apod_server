@@ -20,7 +20,6 @@ exports.getPicturesFromDb = (db, dates) => {
             },
             { pictures: [], missedDates: [] }
         )
-        console.log(result)
         return result
     })
 }

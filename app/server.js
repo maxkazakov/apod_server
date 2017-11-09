@@ -4,7 +4,6 @@ const bodyParser = require("body-parser")
 const app = express()
 
 const port = 8000
-const config = require("./config")
 const dbUrl = process.env.MONGOLAB_URI
 
 MongoClient.connect(dbUrl, (err, database) => {
