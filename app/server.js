@@ -5,8 +5,9 @@ const app = express()
 
 const port = 8000
 const config = require("./config")
+const dbUrl = process.env.MONGOLAB_URI
 
-MongoClient.connect(config.dbUrl, (err, database) => {
+MongoClient.connect(dbUrl, (err, database) => {
     if (err) return console.log(err)
     // routes
     require("./routes")(app, database)
