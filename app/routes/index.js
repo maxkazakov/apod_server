@@ -5,12 +5,13 @@ const database = require("../db")
 const errors = require("../errors")
 
 module.exports = function(app, db) {
-    app.get("/pictures/:date", (req, res, next) => {
-        const date = req.params.date
+    app.get("/pictures", (req, res, next) => {
+        const date = req.query.date
+        const portionSize = parseInt(req.query.portionSize) || 10
         logger.info(
             `---Start pics requiest. Date: ${date}. Porsion size: ${portionSize}`
         )
-        const dates = makeDates(date) // strings
+        const dates = makeDates(date, portionSize) // strings
         database.getPicturesFromDb(db, dates).then(result => {
             if (result.missedDates.length == 0) {
                 logger.info("Pics loaded from db")
@@ -40,9 +41,7 @@ module.exports = function(app, db) {
     })
 }
 
-const portionSize = 10
-
-const makeDates = date_str => {
+const makeDates = (date_str, portionSize) => {
     const date = moment(date_str)
     if (!date.isValid()) throw new errors.ParseDateError(date_str)
 
