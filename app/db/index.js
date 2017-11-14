@@ -25,6 +25,7 @@ exports.getPicturesFromDb = (db, dates) => {
 }
 
 exports.savePicturesToDb = (db, pictures) => {
+    if (pictures.length == 0) return pictures
     const collection = db.collection(collectionName)
     return collection.insertMany(pictures).then(res => {
         if (res.insertedCount != pictures.length) {
