@@ -6,12 +6,19 @@ const errors = require("../errors")
 
 module.exports = function(app, db) {
     app.get("/pictures", (req, res, next) => {
-        const date = req.query.date
-        const portionSize = parseInt(req.query.portionSize) || 10
-        logger.info(
-            `---Start pics requiest. Date: ${date}. Porsion size: ${portionSize}`
-        )
-        const dates = makeDates(date, portionSize) // strings
+        let dates =
+            typeof req.query.dates == Array
+                ? req.query.dates
+                : [req.query.dates]
+        logger.info(`---Dates: ${dates}`)
+        if (!dates || dates.length == 0) {
+            const date = req.query.date
+            const portionSize = parseInt(req.query.portionSize) || 10
+            dates = makeDates(date, portionSize) // strings
+        }
+
+        logger.info(`---Start pics requiest. Dates: ${dates}`)
+
         database.getPicturesFromDb(db, dates).then(result => {
             if (result.missedDates.length == 0) {
                 logger.info("Pics loaded from db")
@@ -21,7 +28,9 @@ module.exports = function(app, db) {
                     .getPictures(result.missedDates)
                     .then(missedPictures => {
                         logger.info(
-                            `Pics missed in db. Count missed: ${missedPictures.length}`
+                            `Pics missed in db. Count missed: ${
+                                missedPictures.length
+                            }`
                         )
                         return database.savePicturesToDb(db, missedPictures)
                     })
