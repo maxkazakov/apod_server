@@ -6,14 +6,8 @@ const errors = require("../errors")
 
 module.exports = function(app, db) {
     app.get("/pictures", (req, res, next) => {
-        let dates = null
-        const queryDates = req.query.dates
-        if (queryDates) {
-            dates =
-                typeof req.query.dates == Array
-                    ? req.query.dates
-                    : [req.query.dates]
-        }
+        let dates = req.query.dates
+        if (dates && !(dates instanceof Array)) dates = [dates]
 
         logger.info(`---Dates: ${dates}`)
         if (!dates || dates.length == 0) {
