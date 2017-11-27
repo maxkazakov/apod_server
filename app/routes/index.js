@@ -6,10 +6,15 @@ const errors = require("../errors")
 
 module.exports = function(app, db) {
     app.get("/pictures", (req, res, next) => {
-        let dates =
-            typeof req.query.dates == Array
-                ? req.query.dates
-                : [req.query.dates]
+        let dates = null
+        const queryDates = req.query.dates
+        if (queryDates) {
+            dates =
+                typeof req.query.dates == Array
+                    ? req.query.dates
+                    : [req.query.dates]
+        }
+
         logger.info(`---Dates: ${dates}`)
         if (!dates || dates.length == 0) {
             const date = req.query.date
