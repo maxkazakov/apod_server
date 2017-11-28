@@ -44,8 +44,8 @@ module.exports = function(app, db) {
 
     app.use(function(err, req, res, next) {
         logger.error("---Finish. Error while loading: " + err.message)
-        console.log(err)
-        res.status(err.code || 500).send(err.message)
+        res.status(err.code || 500)
+        res.json({ error: err.message })
     })
 }
 
