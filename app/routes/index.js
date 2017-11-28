@@ -50,6 +50,9 @@ module.exports = function(app, db) {
 }
 
 const makeDates = (date_str, portionSize) => {
+    if (!date_str) {
+        throw new errors.ParseDateError(date_str)
+    }
     const date = moment(date_str)
     if (!date.isValid()) throw new errors.ParseDateError(date_str)
 
